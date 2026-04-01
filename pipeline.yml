@@ -2,6 +2,6 @@ name: suara-sea-daily
 schedule: "0 0 * * *"
 
 assets:
-  - path: "/app/assets/1_ingestion"
-  - path: "/app/assets/2_staging"
-  - path: "/app/assets/3_intelligence"
+  - path: "assets/1_ingestion"
+  - path: "assets/2_staging"
+  - path: "assets/3_intelligence"

@@ -1,8 +1,9 @@
-/*
-@bruin
-name: ingestion.raw_source
+/* @bruin
+name: suara_sea.raw_source
 type: bq.sql
 connection: gcp-default
-@bruin
-*/
-SELECT 1 as id;
+materialization:
+  type: table
+@bruin */
+
+SELECT 1 as test_id;

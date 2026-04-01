@@ -1,14 +1,13 @@
-"""
-@bruin
-name: intelligence.transcriber
+"""@bruin
+name: transcriber
 type: python
 connection: gcp-default
 depends:
-  - staging.audio_metadata
-@bruin
-"""
+  - suara_sea.stg_audio_metadata
+@bruin"""
+
 def main():
-    print("Suara Intelligence Layer 3: Initialized")
+    print("Suara-SEA Intelligence Layer: Online")
 
 if __name__ == "__main__":
     main()
