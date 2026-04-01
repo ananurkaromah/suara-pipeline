@@ -13,3 +13,6 @@ wheels/
 *.json
 
 .bruin.yml
+logs/runs
+logs/*.log
+*.py[cod]

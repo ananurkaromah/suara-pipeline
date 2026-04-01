@@ -1,10 +1,11 @@
-/*
-@bruin
-name: staging.audio_metadata
+/* @bruin
+name: suara_sea.stg_audio_metadata
 type: bq.sql
 connection: gcp-default
+materialization:
+  type: table
 depends:
-  - ingestion.raw_source
-@bruin
-*/
-SELECT * FROM {{ ref('ingestion.raw_source') }};
+  - suara_sea.raw_source
+@bruin */
+
+SELECT * FROM suara_sea.raw_source;
