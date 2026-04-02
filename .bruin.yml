@@ -1,0 +1,17 @@
+name: suara-pipeline
+default_environment: default
+
+environments:
+  default:
+    connections:
+      google_cloud_platform:
+        - name: gcp-default
+          service_account_file: ./terraform/gcp-key.json
+          project_id: suara-pipeline
+          location: asia-southeast1
+
+# Discovery section
+assets:
+  - path: assets/1_ingestion
+  - path: assets/2_staging
+  - path: assets/3_intelligence
