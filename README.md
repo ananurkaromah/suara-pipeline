@@ -8,6 +8,36 @@ Suara-ID is an end-to-end, cloud-native Data Engineering pipeline designed to in
 
 **The Solution:** Suara-ID solves this by decoupling storage and compute. It automates the batch ingestion of large, multi-ethnic audio datasets (10GB+) into a highly scalable Data Lake (GCS). It then orchestrates a metadata extraction layer into a Data Warehouse (BigQuery) and uses a Python-based intelligence layer (Hugging Face Faster-Whisper) to automatically transcribe the audio. The final output is a structured, queryable dataset ready for Analytics and ML Engineers.
 
+Here is the complete map of your `suara-pipeline` repository.
+
+```jsx
+suara-pipeline/
+├── .bruin.yml                          #Global Orchestrator Config
+├── .gitignore                          #Git rules
+├── [README.md](http://readme.md/)                     #project documentation
+├── [main.py](http://main.py/)
+├── pyproject.toml                      #Python package definitions
+├── uv.lock                             #Locked Python dependency versions
+│
+├── assets/                             #The Bruin DAG
+│   ├── 1_ingestion/                    # Raw Data Landing
+│   │   └── raw_source.py
+│   ├── 2_staging/                      # Cleaning & Modeling
+│   │   └── stg_audio_metadata.sql
+│   └── 3_intelligence/
+│       └── [transcriber.py](http://transcriber.py/)
+│
+├── docker/                            #Container Architecture
+│   ├── Dockerfile
+│   └── docker-compose.yml
+│
+├── terraform/                        #Infrastructure as Code
+│   ├── [main.tf](http://main.tf/)
+│   ├── gcp-key.json                  #(Ignored by *.json) SUPER IMPORTANT!
+│   └── terraform.tfstate             #(Usually ignored, tracks cloud state)*
+└── kaggle.json                       #(Ignored by *.json) Kaggle API Key
+```
+
 ## 2. Cloud & Infrastructure as Code (IaC)
 
 This project is fully developed in the cloud utilizing **Google Cloud Platform (GCP)**.
