@@ -14,7 +14,7 @@ Here is the complete map of the `suara-pipeline` repository.
 suara-pipeline/
 ├── .bruin.yml                          #Global Orchestrator Config
 ├── .gitignore                          #Git rules
-├── [README.md](http://readme.md/)                     #project documentation
+├── [README.md](http://readme.md/)      #project documentation
 ├── [main.py](http://main.py/)
 ├── pyproject.toml                      #Python package definitions
 ├── uv.lock                             #Locked Python dependency versions
@@ -27,15 +27,15 @@ suara-pipeline/
 │   └── 3_intelligence/
 │       └── [transcriber.py](http://transcriber.py/)
 │
-├── docker/                            #Container Architecture
+├── docker/                             #Container Architecture
 │   ├── Dockerfile
 │   └── docker-compose.yml
 │
-├── terraform/                        #Infrastructure as Code
+├── terraform/                          #Infrastructure as Code
 │   ├── [main.tf](http://main.tf/)
-│   ├── gcp-key.json                  #(Ignored by *.json) SUPER IMPORTANT!
-│   └── terraform.tfstate             #(Usually ignored, tracks cloud state)*
-└── kaggle.json                       #(Ignored by *.json) Kaggle API Key
+│   ├── gcp-key.json                    #(Ignored by *.json) SUPER IMPORTANT!
+│   └── terraform.tfstate               #(Usually ignored, tracks cloud state)*
+└── kaggle.json                         #(Ignored by *.json) Kaggle API Key
 ```
 
 ## 2. Cloud & Infrastructure as Code (IaC)
