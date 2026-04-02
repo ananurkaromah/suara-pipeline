@@ -128,31 +128,7 @@ gcloud storage cp -r raw_audio/* gs://YOUR_BUCKET_NAME/
 
 ### Step 5: Execute the Pipeline (Bruin)
 
-Bruin acts as our orchestrator and data transformer. Before running, ensure your `.bruin.yml`  file is configured with your correct GCP project ID and region (e.g., `asia-southeast1`).
-The  **`.bruin.yml`** file created in main root as global orchestrator configuration. 
-
-Bash
-
-```jsx
-name: suara-pipeline
-default_environment: default
-
-environments:
-  default:
-    connections:
-      google_cloud_platform:
-        - name: gcp-default
-          service_account_file: ./terraform/gcp-key.json
-          project_id: suara-pipeline
-          location: asia-southeast1
-
-# Discovery section
-assets:
-  - path: assets/1_ingestion
-  - path: assets/2_staging
-  - path: assets/3_intelligence
-
-```
+Bruin acts as our orchestrator and data transformer. Before running, ensure your [.bruin.yml](https://github.com/ananurkaromah/suara-pipeline/blob/main/.bruin.yml) file is configured with your correct GCP project ID and region (e.g., `asia-southeast1`).
 
 The pipeline is structured as a Directed Acyclic Graph (DAG) across three assets in the `/assets` folder:
 
