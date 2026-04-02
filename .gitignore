@@ -12,7 +12,6 @@ wheels/
 # Ignore GCP credentials
 *.json
 
-.bruin.yml
 logs/runs
 logs/*.log
 *.py[cod]
