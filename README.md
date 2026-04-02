@@ -14,8 +14,8 @@ Here is the complete map of the `suara-pipeline` repository.
 suara-pipeline/
 ├── .bruin.yml                          #Global Orchestrator Config
 ├── .gitignore                          #Git rules
-├── [README.md](http://readme.md/)      #project documentation
-├── [main.py](http://main.py/)
+├── README.md                           #project documentation
+├── main.py
 ├── pyproject.toml                      #Python package definitions
 ├── uv.lock                             #Locked Python dependency versions
 │
@@ -25,14 +25,14 @@ suara-pipeline/
 │   ├── 2_staging/                      # Cleaning & Modeling
 │   │   └── stg_audio_metadata.sql
 │   └── 3_intelligence/
-│       └── [transcriber.py](http://transcriber.py/)
+│       └── transcriber.py
 │
 ├── docker/                             #Container Architecture
 │   ├── Dockerfile
 │   └── docker-compose.yml
 │
 ├── terraform/                          #Infrastructure as Code
-│   ├── [main.tf](http://main.tf/)
+│   ├── main.tf
 │   ├── gcp-key.json                    #(Ignored by *.json) SUPER IMPORTANT!
 │   └── terraform.tfstate               #(Usually ignored, tracks cloud state)*
 └── kaggle.json                         #(Ignored by *.json) Kaggle API Key
