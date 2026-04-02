@@ -8,7 +8,7 @@ Suara-ID is an end-to-end, cloud-native Data Engineering pipeline designed to in
 
 **The Solution:** Suara-ID solves this by decoupling storage and compute. It automates the batch ingestion of large, multi-ethnic audio datasets (10GB+) into a highly scalable Data Lake (GCS). It then orchestrates a metadata extraction layer into a Data Warehouse (BigQuery) and uses a Python-based intelligence layer (Hugging Face Faster-Whisper) to automatically transcribe the audio. The final output is a structured, queryable dataset ready for Analytics and ML Engineers.
 
-Here is the complete map of your `suara-pipeline` repository.
+Here is the complete map of the `suara-pipeline` repository.
 
 ```jsx
 suara-pipeline/
