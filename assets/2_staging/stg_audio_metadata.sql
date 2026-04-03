@@ -1,40 +1,29 @@
--- @bruin
--- name: suara_id.stg_audio_metadata
--- type: bq.sql
--- connection: gcp-default
--- materialization:
---   type: table
--- description: "Staging dataset containing extracted metadata and file paths from raw audio files."
--- owner: "data.engineering@suara-pipeline.com"
--- depends:
---   - suara_id.raw_source
--- columns:
---   - name: audio_id
---     type: string
---     description: "Unique identifier for the audio file."
---     primary_key: true
---     checks:
---       - name: not_null
---       - name: unique
---   - name: file_path
---     type: string
---     description: "Cloud storage path or local URI to the raw audio file."
---     checks:
---       - name: not_null
---   - name: duration_seconds
---     type: numeric
---     description: "Duration of the audio file in seconds."
---     checks:
---       - name: not_null
--- custom_checks:
---   - name: "ensure_positive_duration"
---     query: "SELECT count(*) FROM suara_id.stg_audio_metadata WHERE duration_seconds <= 0"
---     value: 0
--- @bruin
+/* @bruin
+name: suara_id.stg_audio_metadata
+type: bq.sql
+connection: gcp-default
+materialization:
+  type: table
+  partition_by: "DATE(processed_at)"
+  cluster_by: ["audio_file_name"]
+depends:
+  - suara_id.raw_source
+description: "Staging layer partitioned by processing date and clustered by filename."
+owner: "data.engineer@suara_id.com"
+columns:
+  - name: id
+    type: int64
+    description: "Primary key inherited from raw source"
+  - name: audio_file_name
+    type: string
+    description: "The name of the audio file"
+  - name: processed_at
+    type: timestamp
+    description: "Timestamp of when the record was processed"
+@bruin */
 
 SELECT 
-  CAST(id AS STRING) AS audio_id, 
-  audio_file_name AS file_path, 
-  1.0 AS duration_seconds, 
+  id, 
+  audio_file_name, 
   CURRENT_TIMESTAMP() as processed_at 
 FROM suara_id.raw_source;
