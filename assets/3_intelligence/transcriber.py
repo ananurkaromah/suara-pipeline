@@ -7,7 +7,7 @@ materialization:
 depends:
   - suara_id.stg_audio_metadata
 description: "Transcribes Indonesian audio files using Faster-Whisper AI."
-owner: "data.engineer@suara_id.com"
+owner: "ana@suara-id.com"
 custom_checks:
   - name: "check_non_empty_transcripts"
     description: "Ensure no transcripts are empty strings."
