@@ -39,7 +39,7 @@ suara-pipeline/
 │   ├── main.tf
 │   ├── gcp-key.json        #(Ignored by *.json) SUPER IMPORTANT!
 │   └── terraform.tfstate   #(Usually ignored, tracks cloud state)*
-└── kaggle.json             #(Ignored by *.json) Kaggle API Key
+└── .env                    #(Ignored by .env) API keys
 ```
 
 ## **2. Cloud & Infrastructure as Code (IaC)**
