@@ -6,18 +6,25 @@ materialization:
   type: table
 description: "Pulls a list of audio files from the GCS Data Lake into BigQuery."
 owner: "data.engineer@suara_id.com"
+custom_checks:
+  - name: "check_only_wav_files"
+    description: "Ensure that only .wav audio files are ingested into the raw layer."
+    query: "SELECT count(*) FROM suara_id.raw_source WHERE audio_file_name NOT LIKE '%.wav'"
+    value: 0
 columns:
   - name: id
     type: int64
+    description: "Unique integer identifier for each audio record."
     primary_key: true
     checks:
       - name: not_null
       - name: unique
   - name: audio_file_name
     type: string
+    description: "The full filename/path of the audio asset stored in GCS."
     checks:
       - name: not_null
-@bruin"""
+@bruin """
 
 import pandas as pd
 from google.cloud import storage
