@@ -24,7 +24,7 @@ resource "google_storage_bucket" "audio_lake" {
 
 # 2. BigQuery Dataset (Data Warehouse)
 resource "google_bigquery_dataset" "speech_dataset" {
-  dataset_id = "suara_sea"
+  dataset_id = "suara_id"
   location   = "asia-southeast1"
 }
 

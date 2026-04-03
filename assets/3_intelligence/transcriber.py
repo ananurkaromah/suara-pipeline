@@ -1,22 +1,11 @@
-"""@bruin
-name: suara_sea.transcriptions
-type: python
-connection: gcp-default
-materialization:
-  type: table
-depends:
-  - suara_sea.stg_audio_metadata
-description: "Transcribes audio files using Faster-Whisper."
-owner: "data.engineer@suara-sea.com"
-@bruin"""
-
 import pandas as pd
 from google.cloud import storage, bigquery
 from faster_whisper import WhisperModel
 import os
+import uuid # Library bawaan Python untuk membuat ID unik
 
 def materialize():
-    # 1. Initialize the AI Model (Using 'tiny' model for CPU speed)
+    # 1. Initialize the AI Model
     print("Loading Hugging Face Whisper Model...")
     model = WhisperModel("tiny", device="cpu", compute_type="int8")
 
@@ -26,51 +15,60 @@ def materialize():
     bucket = storage_client.bucket("suara-lake-ananur")
 
     # 3. Ask the Data Warehouse which files to process
-    # We limit to 3 files for our initial test run!
+    # Perbaikan: Sesuaikan dengan nama kolom baru di stg_audio_metadata
     query = """
-        SELECT id, audio_file_name 
-        FROM `suara-pipeline.suara_sea.stg_audio_metadata` 
+        SELECT stg.audio_id, stg.file_path 
+        FROM `suara-pipeline.suara_id.stg_audio_metadata` AS stg
+        LEFT JOIN `suara-pipeline.suara_id.transcriptions` AS tr
+          ON stg.audio_id = tr.audio_id
+        WHERE tr.audio_id IS NULL
         LIMIT 3
     """
-    print("Fetching audio metadata from BigQuery...")
-    df_meta = bq_client.query(query).to_dataframe()
+    print("Fetching unprocessed audio metadata from BigQuery...")
+    try:
+        df_meta = bq_client.query(query).to_dataframe()
+    except Exception as e:
+        # Jika tabel transcription belum ada (run pertama), gunakan query dasar
+        print("First run detected, fetching base metadata...")
+        fallback_query = """
+            SELECT audio_id, file_path 
+            FROM `suara-pipeline.suara_id.stg_audio_metadata` 
+            LIMIT 3
+        """
+        df_meta = bq_client.query(fallback_query).to_dataframe()
+
+    if df_meta.empty:
+        print("No new audio files to process. Exiting cleanly.")
+        return pd.DataFrame()
 
     results = []
 
     # 4. Process the audio files
     for index, row in df_meta.iterrows():
-        file_name = row['audio_file_name']
-        file_id = row['id']
+        file_name = row['file_path']
+        file_id = row['audio_id']
         
         print(f"\n[{index+1}/{len(df_meta)}] Processing: {file_name}")
         
-        # Download physical file from the Data Lake to a temporary local file
         blob = bucket.blob(file_name)
         local_temp_path = f"/tmp/{file_name.split('/')[-1]}"
         blob.download_to_filename(local_temp_path)
         
-        # Transcribe using Whisper, forcing Indonesian ('id')
         print("Transcribing audio...")
         segments, info = model.transcribe(local_temp_path, language="id", beam_size=5)
         
-        # Combine the text segments
         full_text = " ".join([segment.text for segment in segments])
-        print(f"Result: {full_text[:60]}...") # Print a preview
+        print(f"Result: {full_text[:60]}...")
         
-        # Save to our results list
+        # Perbaikan: Cocokkan keys ini persis dengan yang ada di header Bruin!
         results.append({
-            "audio_id": file_id,
-            "file_name": file_name,
-            "transcript": full_text.strip(),
-            "language_detected": info.language,
-            "language_probability": float(info.language_probability)
+            "transcription_id": f"trx_{uuid.uuid4().hex[:8]}", # Membuat ID Unik
+            "audio_id": str(file_id),
+            "transcription_text": full_text.strip()
         })
         
-        # Clean up the temporary file so we don't run out of storage
         if os.path.exists(local_temp_path):
             os.remove(local_temp_path)
 
     print("\nTranscription batch complete! Passing dataframe to Bruin...")
-    
-    # 5. Return the dataframe for Bruin to materialize into BigQuery
     return pd.DataFrame(results)

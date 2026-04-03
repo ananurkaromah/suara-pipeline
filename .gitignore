@@ -12,6 +12,9 @@ wheels/
 # Ignore GCP credentials
 *.json
 
+logs
 logs/runs
 logs/*.log
 *.py[cod]
+
+.env
