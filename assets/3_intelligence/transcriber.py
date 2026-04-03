@@ -2,7 +2,7 @@ import pandas as pd
 from google.cloud import storage, bigquery
 from faster_whisper import WhisperModel
 import os
-import uuid # Library bawaan Python untuk membuat ID unik
+import uuid 
 
 def materialize():
     # 1. Initialize the AI Model
@@ -15,7 +15,6 @@ def materialize():
     bucket = storage_client.bucket("suara-lake-ananur")
 
     # 3. Ask the Data Warehouse which files to process
-    # Perbaikan: Sesuaikan dengan nama kolom baru di stg_audio_metadata
     query = """
         SELECT stg.audio_id, stg.file_path 
         FROM `suara-pipeline.suara_id.stg_audio_metadata` AS stg
@@ -28,7 +27,6 @@ def materialize():
     try:
         df_meta = bq_client.query(query).to_dataframe()
     except Exception as e:
-        # Jika tabel transcription belum ada (run pertama), gunakan query dasar
         print("First run detected, fetching base metadata...")
         fallback_query = """
             SELECT audio_id, file_path 
@@ -60,9 +58,8 @@ def materialize():
         full_text = " ".join([segment.text for segment in segments])
         print(f"Result: {full_text[:60]}...")
         
-        # Perbaikan: Cocokkan keys ini persis dengan yang ada di header Bruin!
         results.append({
-            "transcription_id": f"trx_{uuid.uuid4().hex[:8]}", # Membuat ID Unik
+            "transcription_id": f"trx_{uuid.uuid4().hex[:8]}", 
             "audio_id": str(file_id),
             "transcription_text": full_text.strip()
         })
