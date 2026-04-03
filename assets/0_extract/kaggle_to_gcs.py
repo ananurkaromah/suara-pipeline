@@ -24,9 +24,12 @@ columns:
     description: "The count of .wav files successfully transferred to GCS."
     checks:
       - name: not_null
+      - name: positive
   - name: source_dataset
     type: string
     description: "The Kaggle source path used for this extraction."
+    checks:
+      - name: not_null
 @bruin """
 
 import os
@@ -71,7 +74,6 @@ def materialize():
     shutil.rmtree(local_download_path)
     
     # 5. Return Metadata for Bruin Table
-    # This fulfills the 'Columns Defined' and 'Primary Key' criteria
     print(f"Extraction complete. {upload_count} files in GCS.")
     return pd.DataFrame([{
         "batch_id": datetime.now().strftime("%Y%m%d_%H%M%S"),

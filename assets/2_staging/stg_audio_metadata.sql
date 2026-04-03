@@ -9,7 +9,7 @@ materialization:
 depends:
   - suara_id.raw_source
 description: "Staging layer partitioned by processing date and clustered by filename."
-owner: "data.engineer@suara_id.com"
+owner: "ana@suara-id.com"
 custom_checks:
   - name: "check_id_range"
     description: "Ensure ID is always positive."
