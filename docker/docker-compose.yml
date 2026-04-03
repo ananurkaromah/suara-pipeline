@@ -1,11 +1,11 @@
-version: '3.8'
 services:
   suara-worker:
-    build: docker/
+    build:
+      context: ..         
+      dockerfile: docker/Dockerfile  
     container_name: suara_worker
     env_file:
-      - .env
+      - ../.env           
     volumes:
-      - .:/app
-      # Map the GCP key securely into the container
-      - ./gcp-key.json:/app/gcp-key.json:ro
+      - ..:/app          
+      - ../terraform/gcp-key.json:/app/gcp-key.json:ro

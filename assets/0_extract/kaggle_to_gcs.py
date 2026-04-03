@@ -7,6 +7,7 @@ owner: "data.engineer@suara_id.com"
 @bruin """
 
 import os
+import shutil
 from kaggle.api.kaggle_api_extended import KaggleApi
 from google.cloud import storage
 
@@ -16,42 +17,32 @@ def main():
     gcp_project = "suara-pipeline"
     bucket_name = "suara-lake-ananur"
 
-    print("1. Authenticating Kaggle and downloading dataset...")
+    print("1. Authenticating Kaggle...")
     api = KaggleApi()
     api.authenticate()
     
-    # Create temp directory if it doesn't exist
     if not os.path.exists(local_download_path):
         os.makedirs(local_download_path)
     
+    print("2. Downloading dataset...")
     api.dataset_download_files(dataset_name, path=local_download_path, unzip=True)
-    print(f"Dataset downloaded to {local_download_path}")
 
-    print("2. Connecting to Google Cloud Storage...")
+    print("3. Connecting to GCS...")
     storage_client = storage.Client(project=gcp_project)
     bucket = storage_client.bucket(bucket_name)
 
-    print(f"3. Uploading .wav files to gs://{bucket_name}/...")
     upload_count = 0
-    
     for root, _, files in os.walk(local_download_path):
         for file in files:
             if file.endswith(".wav"):
-                local_file_path = os.path.join(root, file)
-                # Keep it simple: upload to the root of the bucket
                 blob = bucket.blob(file) 
-                blob.upload_from_filename(local_file_path)
+                blob.upload_from_filename(os.path.join(root, file))
                 upload_count += 1
-                
                 if upload_count % 100 == 0:
                     print(f"Uploaded {upload_count} files...")
 
-    print(f"Success! {upload_count} audio files uploaded to GCS.")
-
-    # 4. Cleanup
-    import shutil
+    print(f"Success! {upload_count} files uploaded.")
     shutil.rmtree(local_download_path)
-    print("Cleanup complete.")
 
 if __name__ == "__main__":
     main()

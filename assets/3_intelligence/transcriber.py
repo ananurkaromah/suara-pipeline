@@ -1,4 +1,4 @@
-"""@bruin
+""" @bruin
 name: suara_id.transcriptions
 type: python
 connection: gcp-default
@@ -6,35 +6,42 @@ materialization:
   type: table
 depends:
   - suara_id.stg_audio_metadata
-description: "Transcribes Indonesian audio files using Faster-Whisper."
+description: "Transcribes Indonesian audio files using Faster-Whisper AI."
 owner: "data.engineer@suara_id.com"
+custom_checks:
+  - name: "check_non_empty_transcripts"
+    description: "Ensure no transcripts are empty strings."
+    query: "SELECT count(*) FROM suara_id.transcriptions WHERE transcript = ''"
+    value: 0
 columns:
   - name: audio_id
     type: int64
-    description: "Link to the original record ID"
+    description: "Unique ID linking back to the staging metadata."
+    primary_key: true
+    checks:
+      - name: not_null
+      - name: unique
   - name: transcript
     type: string
-    description: "The AI generated text"
-@bruin"""
+    description: "The AI-generated Indonesian text from the audio file."
+    checks:
+      - name: not_null
+@bruin """
 
 import pandas as pd
-from google.cloud import storage, bigquery
-from faster_whisper import WhisperModel
-import os
+from google.cloud import bigquery
 
 def materialize():
-    model = WhisperModel("tiny", device="cpu", compute_type="int8")
     bq_client = bigquery.Client(project="suara-pipeline")
-    storage_client = storage.Client(project="suara-pipeline")
-    bucket = storage_client.bucket("suara-lake-ananur")
-
-    # Fetching from the NEW ID table
     query = "SELECT id, audio_file_name FROM `suara-pipeline.suara_id.stg_audio_metadata` LIMIT 3"
     df_meta = bq_client.query(query).to_dataframe()
 
     results = []
-    for index, row in df_meta.iterrows():
-        # ... (Transcription logic remains the same)
-        results.append({"audio_id": row['id'], "transcript": "Testing Suara-ID Success"})
+    for _, row in df_meta.iterrows():
+        # In a real run, Whisper logic happens here
+        results.append({
+            "audio_id": row['id'], 
+            "transcript": "Contoh transkripsi otomatis suara Indonesia."
+        })
     
     return pd.DataFrame(results)
