@@ -1,12 +1,11 @@
+version: '3.8'
 services:
-  bruin-worker:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
-    container_name: suara-worker
+  suara-worker:
+    build: docker/
+    container_name: suara_worker
+    env_file:
+      - .env
     volumes:
-      - ..:/app
-      - ~/.config/gcloud:/root/.config/gcloud # Optional: shares your gcloud auth
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/terraform/gcp-key.json
-    network_mode: host
+      - .:/app
+      # Map the GCP key securely into the container
+      - ./gcp-key.json:/app/gcp-key.json:ro

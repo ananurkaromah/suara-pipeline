@@ -1,11 +1,11 @@
-"""@bruin
-name: suara_sea.raw_source
+""" @bruin
+name: suara_id.raw_source
 type: python
 connection: gcp-default
 materialization:
   type: table
 description: "Pulls a list of audio files from the GCS Data Lake into BigQuery."
-owner: "data.engineer@suara-sea.com"
+owner: "data.engineer@suara_id.com"
 columns:
   - name: id
     type: int64
