@@ -46,11 +46,9 @@ suara-pipeline/
 
 ## **Project Architecture**
 
-The **Suara-ID** pipeline is an automated, end-to-end Data Engineering architecture orchestrated by Bruin. It extracts raw data from Kaggle, loads it into a Google Cloud Data Lake, processes metadata in BigQuery, and utilizes an AI model to generate transcripts, which are finally visualized in a BI Dashboard.
+The **Suara-ID** pipeline is an automated, end-to-end Data Engineering architecture orchestrated by Bruin. It extracts raw data from Kaggle, loads it into a Google Cloud Data Lake, processes metadata in BigQuery, and utilizes an AI model to generate transcripts, which are finally visualized in a BI Dashboard Looker.
 
-Code snippet
-
-```jsx
+```mermaid
 flowchart LR
     subgraph External [External Source]
         Kaggle[Kaggle API]
@@ -67,27 +65,25 @@ flowchart LR
 
     subgraph GCP [Google Cloud Platform]
         direction TB
-        GCS[(Cloud Storage<br/>Data Lake)]
-        BQ_Raw[(BigQuery<br/>Raw Tables)]
-        BQ_Stg[(BigQuery<br/>Staging Layer)]
-        BQ_Final[(BigQuery<br/>AI Transcripts)]
+        GCS[(Cloud Storage)]
+        BQ_Raw[(BigQuery Raw)]
+        BQ_Stg[(BigQuery Staging)]
+        BQ_Final[(BigQuery AI)]
     end
 
     subgraph BI [Presentation]
         Looker[Looker Studio]
     end
 
-    %% Data Flow
     Kaggle -->|Download| E
     E -->|Upload .wav files| GCS
     E -.->|Batch Metadata| BQ_Raw
     I -.->|List Blobs| GCS
     I -->|Record Metadata| BQ_Raw
-    BQ_Raw -->|SQL Partition/Cluster| BQ_Stg
+    BQ_Raw -->|Partition and Cluster| BQ_Stg
     BQ_Stg -.->|Fetch Batch IDs| T
-    T -->|Faster-Whisper Text| BQ_Final
+    T -->|AI Transcripts| BQ_Final
 
-    %% Presentation Flow
     BQ_Stg ===> Looker
     BQ_Final ===> Looker
 ```
@@ -136,7 +132,6 @@ Data transformations and orchestration are handled natively by **Bruin**, which 
 - **Staging (SQL):** Enforces data quality checks (Not Null, Unique) and adds temporal metadata (`processed_at`) to the raw ingestion list.
 - **Intelligence Layer (Python):** Transforms the data by passing the records through a Hugging Face `faster-whisper` (tiny, int8 quantization) model optimized for the Indonesian language (`id`), and appending the AI-generated `transcript` directly into the final BigQuery presentation table.
 
-## **Dashboard & Visualization**
 
 ## **Dashboard & Visualization**
 
@@ -145,10 +140,8 @@ The final presentation layer is built using **Looker Studio**, connected directl
 - **Categorical Graph:** A Donut Chart visualizing the **Audio Distribution by Ethnic Accent**. This utilizes a custom SQL transformation to dynamically categorize the raw audio files into five regional Indonesian accents (Jawa, Batak, Melayu, Papua, and Sunda) based on file naming conventions.
 - **Temporal Graph:** A Column Chart tracking the **Daily Ingestion Volume** against the `processed_at` timestamp. This visualizes the batch ingestion loads and confirms the temporal distribution of the pipeline's execution.
 - **Data Quality Table:** A detailed grid displaying the original `audio_file_name` alongside the generated AI `transcript`, providing transparent, row-level proof of the successful end-to-end extraction and transformation flow.
+![alt text](diagram.png)
     
-    ![dashboard.png](attachment:991cf696-e50a-4889-ab88-d53c618ffb5c:dashboard.png)
-    
-
 ---
 
 ## **Setup Instructions**
