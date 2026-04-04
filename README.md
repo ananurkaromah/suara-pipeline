@@ -187,7 +187,7 @@ bruin run .
 
 If successful, Bruin will output green success checks for the pipeline assets and all data quality constraints. The final transcribed dataset will be available in your BigQuery `transcriptions` table, ready to be attached to Looker Studio for dashboard visualization.
 
-All the instructions above are carried out for the **“Development Mode”**, while for the actual **“Production Mode”** we can make changes  the ****Limits for the Final Run.  In `1_ingestion/raw_source.py`, you have `max_results=100`, and in  `_intelligence/transcriber.py`, you have `LIMIT 3`.  For the final run remove these limits so the full 10GB+ dataset is processed.
+All the instructions above are carried out for the **“Development Mode”**, while for the actual **“Production Mode”** we can make changes  the ****Limits for the Final Run.  In `1_ingestion/raw_source.py`, you have `max_results=200`.  For the final run remove these limits so the full 10GB+ dataset is processed.
 
 ### Pipeline Idempotency & Incremental Loading
 
