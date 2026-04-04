@@ -34,7 +34,7 @@ from google.cloud import storage
 def materialize():
     storage_client = storage.Client(project="suara-pipeline")
     bucket = storage_client.bucket("suara-lake-ananur")
-    blobs = bucket.list_blobs(max_results=100)
+    blobs = bucket.list_blobs(max_results=200)
     
     data = [{"id": i + 1, "audio_file_name": b.name} for i, b in enumerate(blobs) if b.name.endswith('.wav')]
     return pd.DataFrame(data)

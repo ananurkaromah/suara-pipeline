@@ -33,7 +33,7 @@ from google.cloud import bigquery
 
 def materialize():
     bq_client = bigquery.Client(project="suara-pipeline")
-    query = "SELECT id, audio_file_name FROM `suara-pipeline.suara_id.stg_audio_metadata` LIMIT 3"
+    query = "SELECT id, audio_file_name FROM `suara-pipeline.suara_id.stg_audio_metadata`"
     df_meta = bq_client.query(query).to_dataframe()
 
     results = []
