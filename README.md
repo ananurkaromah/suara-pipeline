@@ -50,40 +50,65 @@ The **Suara-ID** pipeline is an automated, end-to-end Data Engineering architect
 
 ```mermaid
 flowchart LR
-    subgraph External [External Source]
-        Kaggle[Kaggle API]
+    %% -- Color Theme Definitions --
+    classDef external fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,color:#212529
+    classDef orchestrator fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef storage fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef warehouse fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#b71c1c
+    classDef bi fill:#fff8e1,stroke:#f57f17,stroke-width:2px,color:#e65100
+
+    %% -- Architecture Nodes --
+    
+    subgraph Source [🌐 External Source]
+        Kaggle[Kaggle API]:::external
     end
 
-    subgraph Bruin [Bruin Orchestration]
+    subgraph Orchestrator [⚙️ Bruin Orchestration DAG]
         direction TB
-        E[0. Extract]
-        I[1. Ingest]
-        S[2. Stage]
-        T[3. Intelligence]
+        E[1️⃣ Extract]:::orchestrator
+        I[2️⃣ Ingest]:::orchestrator
+        S[3️⃣ Stage]:::orchestrator
+        T[4️⃣ Intelligence]:::orchestrator
+        
         E --> I --> S --> T
     end
 
-    subgraph GCP [Google Cloud Platform]
+    subgraph GCP [☁️ Google Cloud Platform]
         direction TB
-        GCS[(Cloud Storage)]
-        BQ_Raw[(BigQuery Raw)]
-        BQ_Stg[(BigQuery Staging)]
-        BQ_Final[(BigQuery AI)]
+        
+        subgraph Lake [Data Lake]
+            GCS[(Cloud Storage)]:::storage
+        end
+        
+        subgraph Warehouse [BigQuery]
+            direction TB
+            BQ_Raw[(Raw Metadata)]:::warehouse
+            BQ_Stg[(Staging / Partitioned)]:::warehouse
+            BQ_Final[(AI Transcripts)]:::warehouse
+        end
     end
 
-    subgraph BI [Presentation]
-        Looker[Looker Studio]
+    subgraph BI_Layer [📊 Presentation]
+        Looker[Looker Studio Dashboard]:::bi
     end
 
-    Kaggle -->|Download| E
-    E -->|Upload .wav files| GCS
-    E -.->|Batch Metadata| BQ_Raw
-    I -.->|List Blobs| GCS
-    I -->|Record Metadata| BQ_Raw
-    BQ_Raw -->|Partition and Cluster| BQ_Stg
-    BQ_Stg -.->|Fetch Batch IDs| T
-    T -->|AI Transcripts| BQ_Final
+    %% -- Routing & Data Flow --
+    
+    %% Ingestion
+    Kaggle == "Download .wav" ==> E
+    E == "Batch Upload" ==> GCS
+    E -. "Init Meta" .-> BQ_Raw
+    
+    %% Staging
+    I -. "List Blobs" .-> GCS
+    I == "Record Meta" ==> BQ_Raw
+    BQ_Raw -- "SQL Transforms" --> BQ_Stg
+    
+    %% Intelligence
+    BQ_Stg -. "Fetch Batch IDs" .-> T
+    T == "Write Text & Probability" ==> BQ_Final
 
+    %% Presentation
     BQ_Stg ===> Looker
     BQ_Final ===> Looker
 ```
@@ -137,7 +162,7 @@ Data transformations and orchestration are handled natively by **Bruin**, which 
 
 The final presentation layer is built using **Looker Studio**, connected directly to a custom query joining the BigQuery staging metadata and the final AI `transcriptions` table.
 
-- **Categorical Graph:** A Donut Chart visualizing the **Audio Distribution by Ethnic Accent**. This utilizes a custom SQL transformation to dynamically categorize the raw audio files into five regional Indonesian accents (Jawa, Batak, Melayu, Papua, and Sunda) based on file naming conventions.
+- **Categorical Graph:** A Pie Chart visualizing the **Audio Distribution by Ethnic Accent**. This utilizes a custom SQL transformation to dynamically categorize the raw audio files into five regional Indonesian accents (Jawa, Batak, Melayu, Papua, and Sunda) based on file naming conventions.
 - **Temporal Graph:** A Column Chart tracking the **Daily Ingestion Volume** against the `processed_at` timestamp. This visualizes the batch ingestion loads and confirms the temporal distribution of the pipeline's execution.
 - **Data Quality Table:** A detailed grid displaying the original `audio_file_name` alongside the generated AI `transcript`, providing transparent, row-level proof of the successful end-to-end extraction and transformation flow.
 ![alt text](diagram.png)
