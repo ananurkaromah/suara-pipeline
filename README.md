@@ -146,7 +146,7 @@ The final presentation layer is built using **Looker Studio**, connected directl
 - **Temporal Graph:** A Column Chart tracking the **Daily Ingestion Volume** against the `processed_at` timestamp. This visualizes the batch ingestion loads and confirms the temporal distribution of the pipeline's execution.
 - **Data Quality Table:** A detailed grid displaying the original `audio_file_name` alongside the generated AI `transcript`, providing transparent, row-level proof of the successful end-to-end extraction and transformation flow.
     
-    ![image.png](diagram-2.png)
+    ![dashboard.png](attachment:991cf696-e50a-4889-ab88-d53c618ffb5c:dashboard.png)
     
 
 ---
