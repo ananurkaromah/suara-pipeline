@@ -48,70 +48,8 @@ suara-pipeline/
 
 The **Suara-ID** pipeline is an automated, end-to-end Data Engineering architecture orchestrated by Bruin. It extracts raw data from Kaggle, loads it into a Google Cloud Data Lake, processes metadata in BigQuery, and utilizes an AI model to generate transcripts, which are finally visualized in a BI Dashboard Looker.
 
-```mermaid
-flowchart LR
-    %% -- Color Theme Definitions --
-    classDef external fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,color:#212529
-    classDef orchestrator fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1
-    classDef storage fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
-    classDef warehouse fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#b71c1c
-    classDef bi fill:#fff8e1,stroke:#f57f17,stroke-width:2px,color:#e65100
+<img width="941" height="513" alt="suara-pipe-workflow" src="https://github.com/user-attachments/assets/04c34b6b-0b54-430b-b8eb-62268cdbd8b8" />
 
-    %% -- Architecture Nodes --
-    
-    subgraph Source [🌐 External Source]
-        Kaggle[Kaggle API]:::external
-    end
-
-    subgraph Orchestrator [⚙️ Bruin Orchestration DAG]
-        direction TB
-        E[1️⃣ Extract]:::orchestrator
-        I[2️⃣ Ingest]:::orchestrator
-        S[3️⃣ Stage]:::orchestrator
-        T[4️⃣ Intelligence]:::orchestrator
-        
-        E --> I --> S --> T
-    end
-
-    subgraph GCP [☁️ Google Cloud Platform]
-        direction TB
-        
-        subgraph Lake [Data Lake]
-            GCS[(Cloud Storage)]:::storage
-        end
-        
-        subgraph Warehouse [BigQuery]
-            direction TB
-            BQ_Raw[(Raw Metadata)]:::warehouse
-            BQ_Stg[(Staging / Partitioned)]:::warehouse
-            BQ_Final[(AI Transcripts)]:::warehouse
-        end
-    end
-
-    subgraph BI_Layer [📊 Presentation]
-        Looker[Looker Studio Dashboard]:::bi
-    end
-
-    %% -- Routing & Data Flow --
-    
-    %% Ingestion
-    Kaggle == "Download .wav" ==> E
-    E == "Batch Upload" ==> GCS
-    E -. "Init Meta" .-> BQ_Raw
-    
-    %% Staging
-    I -. "List Blobs" .-> GCS
-    I == "Record Meta" ==> BQ_Raw
-    BQ_Raw -- "SQL Transforms" --> BQ_Stg
-    
-    %% Intelligence
-    BQ_Stg -. "Fetch Batch IDs" .-> T
-    T == "Write Text & Probability" ==> BQ_Final
-
-    %% Presentation
-    BQ_Stg ===> Looker
-    BQ_Final ===> Looker
-```
 
 ## **Technology Stack**
 
