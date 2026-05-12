@@ -20,3 +20,18 @@ logs/*.log
 .env
 .bruin.yml
 .vscode
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Data
+*.parquet
+*.csv
+*.wav
