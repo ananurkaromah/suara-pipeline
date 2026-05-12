@@ -28,13 +28,45 @@ columns:
       - name: not_null
 @bruin """
 
+import logging
 import pandas as pd
 from google.cloud import storage
 
+logging.basicConfig(level=logging.INFO)
+
+PROJECT_ID = "suara-pipeline"
+BUCKET_NAME = "suara-lake-ananur"
+
 def materialize():
-    storage_client = storage.Client(project="suara-pipeline")
-    bucket = storage_client.bucket("suara-lake-ananur")
-    blobs = bucket.list_blobs(max_results=200)
-    
-    data = [{"id": i + 1, "audio_file_name": b.name} for i, b in enumerate(blobs) if b.name.endswith('.wav')]
-    return pd.DataFrame(data)
+    try:
+        # Connect to GCS
+        storage_client = storage.Client(project=PROJECT_ID)
+        bucket = storage_client.bucket(BUCKET_NAME)
+
+        logging.info(f"Reading files from bucket: {BUCKET_NAME}")
+
+        # Read all blobs
+        blobs = bucket.list_blobs()
+
+        data = []
+
+        for i, blob in enumerate(blobs, start=1):
+            if blob.name.endswith(".wav"):
+                data.append({
+                    "id": i,
+                    "audio_file_name": blob.name,
+                    "gcs_uri": f"gs://{BUCKET_NAME}/{blob.name}",
+                    "file_size_mb": round(blob.size / (1024 * 1024), 2) if blob.size else None,
+                    "created_at": blob.time_created,
+                    "updated_at": blob.updated
+                })
+
+        df = pd.DataFrame(data)
+
+        logging.info(f"Found {len(df)} WAV files.")
+
+        return df.sort_values("audio_file_name").reset_index(drop=True)
+
+    except Exception as e:
+        logging.error(f"Pipeline failed: {str(e)}")
+        raise

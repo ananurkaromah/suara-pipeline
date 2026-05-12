@@ -64,7 +64,7 @@ def materialize():
     for root, _, files in os.walk(local_download_path):
         for file in files:
             if file.endswith(".wav"):
-                blob = bucket.blob(file) 
+                blob = bucket.blob(f"raw_audio/{file}") 
                 blob.upload_from_filename(os.path.join(root, file))
                 upload_count += 1
                 if upload_count % 100 == 0:
