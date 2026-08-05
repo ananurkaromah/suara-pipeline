@@ -1,37 +1,45 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
 
-# Virtual environments
-.venv
-
+!package.json
+# Data
 # Ignore GCP credentials
-*.json
-
-logs
-logs/runs
-logs/*.log
-*.py[cod]
-
-.env
-.bruin.yml
-.vscode
-
+# Python
+# Python-generated files
 # Terraform
-.terraform/
+# Virtual environments
+# build artifacts
+# data & db files
+# secrets
+# state & logs
+*.csv
+*.db
+*.duckdb
+*.egg-info
+*.egg-info/
+*.json
+*.log
+*.mv.db
+*.parquet
+*.py[cod]
+*.py[oc]
+*.pyc
+*.spec
 *.tfstate
 *.tfstate.backup
-
-# Python
+*.wav# environments
+*credential*
+*key*.json
+.bruin.yml
+.env
+.terraform/
+.venv
 .venv/
+.vscode
 __pycache__/
-*.pyc
-
-# Data
-*.parquet
-*.csv
-*.wav
+build/
+dist/
+logs
+logs/
+logs/*.log
+logs/runs
+venv/
+wheels/

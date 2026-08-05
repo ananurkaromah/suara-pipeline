@@ -1,0 +1,124 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+.python-version
+__pypackages__/
+
+# Python Packaging
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Testing / Coverage
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Static Analysis
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+
+.idea/
+
+# Secrets
+#
+.env
+.env.*
+.envrc
+
+*.pem
+*.key
+*.p12
+*.pfx
+
+credentials.json
+service-account.json
+
+# Logs
+logs/
+*.log
+*.pid
+
+# Build Artifacts
+build/
+dist/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+*.mv.db
+*.wal
+
+# Data Files
+data/
+datasets/
+output/
+exports/
+artifacts/
+cache/
+tmp/
+temp/
+
+# Apache Spark
+spark-warehouse/
+metastore_db/
+
+# Apache Airflow
+airflow.db
+airflow.cfg
+
+airflow/logs/
+airflow/webserver_config.py
+
+# Terraform
+.terraform/
+
+*.tfstate
+*.tfstate.*
+
+override.tf
+override.tf.json
+
+*_override.tf
+*_override.tf.json
+
+crash.log
+
+# Docker
+docker-data/
+docker-volumes/
+
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+*~
